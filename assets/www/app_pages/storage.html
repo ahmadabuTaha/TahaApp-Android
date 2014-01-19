@@ -1,0 +1,119 @@
+<html>
+<head>
+	<title>remote HTML</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="../cordova.js"></script>
+    <link rel="stylesheet" href="../css/style.css">
+	<script>
+	
+	    // local storage example :
+	    //
+	    window.localStorage.setItem("name", "Using Local Storage");
+	    //var keyname = window.localStorage.key(i);
+		var value = window.localStorage.getItem("name");
+		console.log('local storage =====' + value);
+		var currDB = window.openDatabase("myTestDB", "1.0", "my test db", 20000);
+		
+		
+		function doDDL(){
+			currDB.transaction(createDDL, errorCreateDDL, successCreateDDL);
+		}
+		
+		function createDDL(tx){
+			tx.executeSql('DROP TABLE IF EXISTS DEMO');
+			tx.executeSql('CREATE TABLE IF NOT EXISTS DEMO(id unique, title, rank, year, price)');
+		}
+		
+		function errorCreateDDL(tx, error){
+			alert('"Error Processing SQL,: '+error);
+		}
+		
+		function successCreateDDL(){
+			//alert('SQL Success : tables created successfully..');
+		}
+		
+		function doInsertSQL(){
+			currDB.transaction(insertSQL, errorInsert, successInsert);
+		}
+		function insertSQL(tx){
+			tx.executeSql('INSERT INTO DEMO (id,  title, rank, year, price) VALUES (1, "Madgascar II", "a", "2010", "300")');
+			tx.executeSql('INSERT INTO DEMO (id,  title, rank, year, price) VALUES (2, "Ice Age II", "a", "2010", "300")');
+			tx.executeSql('INSERT INTO DEMO (id,  title, rank, year, price) VALUES (3, "Tangled", "a", "2010", "300")');
+			tx.executeSql('INSERT INTO DEMO (id,  title, rank, year, price) VALUES (4, "Cenderlla II", "a", "2010", "300")');
+		}
+		
+		function successInsert(){
+			//alert('SQL Success : Values inserted successfully..');
+		}
+		
+		function errorInsert(tx, error){
+			alert('"Error Processing SQL,: '+error);
+		}
+		
+		
+		function getDemoData(){
+			currDB.transaction(selectSQL, errorSelect);
+		}
+		
+		
+		function selectSQL(tx){
+		   tx.executeSql('SELECT * FROM DEMO', [], querySuccess, errorSelect);
+		}
+		
+		function querySuccess(tx, results){
+			var len = results.rows.length;
+			var html = "<thead>"+
+				         "<tr>"+
+							"<th>ID</th>"+
+							"<th>Title</th>"+
+							"<th>Rank</th>"+
+							"<th>Year</th>"+
+							"<th>price</th>"+
+						"</tr>"+
+	           		"</thead>";
+	        html +="<tbody>";   		
+			for(var i = 0; i < len; i++){
+				 //console.log("Row = " + i + " ID = " + results.rows.item(i).id + " Data =  " + results.rows.item(i).title);
+				 html +="<tr>";
+				 html +="<td>"+results.rows.item(i).id+"</td>"+
+				        "<td>"+results.rows.item(i).title+"</td>"+
+				        "<td>"+results.rows.item(i ).rank+"</td>"+
+				        "<td>"+results.rows.item(i).year+"</td>"+
+				        "<td>"+results.rows.item(i).price+"</td>";
+				 html +="</tr>";
+				 
+			}
+			html+="</tbody>";
+			console.log('Row =='+html);
+			document.getElementById('myTable').innerHTML = html;
+		}
+		
+		function errorSelect(tx, err){
+			 console.log("Error processing SQL: "+err.code);
+			 alert("Error processing SQL: "+err.code);
+		}
+		doDDL();
+		doInsertSQL();
+		getDemoData();
+	</script>
+</head>
+<body>
+	<div id="page-wrap">
+		<h1 id="myHeader">Calling RESTFULL Services</h1>
+		<p>Go to <a href="#">Resposive table</a></p>
+	    <p>This is the exact same table, only has @media queries applied to is so that when the screen is too narrow, it reformats (via only CSS) to make each row a bit like it's own table. This makes for much more repetition and vertical space needed, but it fits within the horizontal space, so only natural vertical scrolling is needed to explore the data.</p>
+	    <table id="myTable">
+	      <thead>
+				<tr>
+					<th>ID</th>
+					<th>Title</th>
+					<th>Rank</th>
+					<th>Year</th>
+					<th>price</th>
+				</tr>
+	      </thead>
+	</table>
+	</div>
+</body>
+        
+</html>

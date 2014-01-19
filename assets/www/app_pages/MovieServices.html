@@ -1,0 +1,93 @@
+<html>
+  <head>
+	<title>RESTFULL HTML</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="stylesheet" href="../css/style.css" />
+	<script type="text/javascript" src="../jquery-1.10.2.js" ></script>
+	<script type="text/javascript">
+			$(document).ready(
+				function(){
+					$.ajax(
+						{
+							url : "http://192.168.1.100:9088/movies-restful-project/movies",
+							type: "GET",
+							dataType : "json",
+							contentType : "application/json; charset=utf-8",
+							success: function(data){
+								console.log('======hi');
+								console.log('======json'+data.movies[0].id);
+								console.log('---------'+data.movies.length);
+								var jsonData = data.movies;
+								
+								var html = "<thead>"+
+				         						"<tr>"+
+													"<th>ID</th>"+
+													"<th>Name</th>"+
+													"<th>Price</th>"+
+													"<th>Type</th>"+
+												"</tr>"+
+	           								"</thead>";
+	        					html +="<tbody>";
+	        					for(var i = 0; i < data.movies.length; i++){
+	        					    var style='';
+	        					    var typen = '';
+	        					    
+	        					    if(data.movies[i].type == 1){
+	        					    	typen = 'Action';
+	        					    	style = "style='background-color:#cccccc;color:blue;' ";
+	        					    }
+	        					    else if(data.movies[i].type == 2){
+	        					    	typen = 'Comedy';
+	        					    	style = "style='background-color:yellow;color:#000000;' ";
+	        					    }
+	        					    else if(data.movies[i].type == 3){
+	        					    	typen = 'Drama';
+	        					    	style = "style='background-color:hotpink;color:#000000;' ";
+	        					    }
+	        					    else if(data.movies[i].type == 4){
+	        					    	typen = 'Adventure';
+	        					    	style = "style='background-color:hotpink;limegreen:#000000;' ";
+	        					    }
+	        					    else{
+	        					    	typen = 'History';
+	        					    	style = "style='background-color:lavender;limegreen:#000000;' ";
+	        					    }
+	        						html +="<tr "+style+">";
+									html +="<td>"+data.movies[i].id+"</td>"+
+									        "<td>"+data.movies[i].name+"</td>"+
+									        "<td>"+data.movies[i].price+"</td>"+
+									        "<td>"+typen+"</td>";
+									html +="</tr>";
+	        					}
+	        					//html+="</tbody>";
+	        					html+="</tbody>";
+								console.log('Row =='+html);
+								document.getElementById('myTable').innerHTML = html;
+							},
+					    	error : function(jqXHr){
+						  		//alert(jqXHR.statusText);
+							}		
+						}	
+					);
+				}
+			);
+	</script>
+   </head>
+   <body>
+   		<div id="page-wrap">
+			<h1 id="myHeader">Responsive Table</h1>
+			<p>Go to <a href="#">Non-Responsive Table</a></p>
+		    <p>This is the exact same table, only has @media queries applied to is so that when the screen is too narrow, it reformats (via only CSS) to make each row a bit like it's own table. This makes for much more repetition and vertical space needed, but it fits within the horizontal space, so only natural vertical scrolling is needed to explore the data.</p>
+		    <table id="myTable">
+		      <thead>
+					<tr>
+						<th>ID</th>
+						<th>Name</th>
+						<th>Price</th>
+						<th>Type</th>
+					</tr>
+		      </thead>
+			</table>
+		</div>
+   </body>
+</html>

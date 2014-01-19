@@ -1,0 +1,41 @@
+<html>
+<head>
+	<title>remote HTML</title>
+	<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+    <script type="text/javascript" src="../cordova.js"></script>
+    <!--<script type="text/javascript" src="../barcodescanner.js"></script> -->
+     <script type="text/javascript" charset="utf-8">
+    
+    //var scanner = cordova.require("cordova/plugin/BarcodeScanner");
+    
+    function scanBarCode(var scan_input){
+    	cordova.plugins.barcodeScanner.scan(
+                  function (result) {
+                     /* alert("We got a barcode\n" +
+                            "Result: " + result.text + "\n" +
+                            "Format: " + result.format + "\n" +
+                            "Cancelled: " + result.cancelled);
+                    */
+                    
+                    var scannerInput = document.getElementById(scan_input);
+                    scannerInput.value = result.text;
+                  }, 
+                  function (error) {
+                      alert("Scanning failed: " + error);
+                  }
+               );
+     }
+     </script>
+</head>
+<body>
+		< <h1>Welcome to PhoneGap!</h1>
+    <h2>this file is located at assets/index.html</h2>
+    <div id="info">
+      <h4>Platform: <span id="platform">&nbsp;</span></h4>
+      <h4>Version: <span id="version">&nbsp;</span></h4>
+      <h4>UUID:   <span id="uuid">&nbsp;</span></h4>
+    </div>
+    <a href="#" class="btn large" onclick="scan();">Scan</a>
+</body>
+      
+</html>

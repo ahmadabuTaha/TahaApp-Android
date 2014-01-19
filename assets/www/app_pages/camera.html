@@ -1,0 +1,139 @@
+<html>
+    <head>
+        
+        
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+       
+        <!-- <script type="text/javascript" src="../phonegap.js"></script>-->
+        <script type="text/javascript" src="../cordova.js"></script>
+        <title>Hello World - Camera</title>
+        <script type="text/javascript" charset="utf-8">
+        
+       		var pictureSource;
+			var destinationType;
+			
+			document.addEventListener("deviceready", onDeviceReady, false);
+			
+			function onDeviceReady(){
+				pictureSource   = this.navigator.camera.PictureSourceType;
+				destinationType = this.navigator.camera.DestinationType;
+			}
+			
+			function onPhotoDataSuccess(imageData){
+			//alert(imageData);
+				var smallImage = document.getElementById('smallImage');
+				smallImage.style.display = 'block';
+				smallImage.src = "data:image/jpeg;base64," +imageData;
+				document.getElementById('img').value =smallImage.src ; 
+				
+			}
+			
+			function onPhotoURISuccess(imageURI){
+				var largeImage = document.getElementById('largeImage');
+				largeImage.style.display = 'block';
+				largeImage.src = imageURI;
+			}
+			function capturePhoto(){
+				navigator.camera.getPicture(onPhotoDataSuccess, onFail,{
+					quality : 50,
+					destinationType : destinationType.DATA_URL
+				});
+			}
+			function capturePhotoEdit(){
+				navigator.camera.getPicture(onPhotoURISuccess, onFail, {
+					quality : 20,
+					allowEdit : true,
+					destinationType : destinationType.DATA_URL
+				});
+			}
+			
+			function getPhoto(source){
+				navigator.camera.getPicture(onPhotoURISuccess, onFail, {
+					quality : 50,
+					destinationType : destinationType.FILE_URI,
+					sourceType : source
+				});
+			}
+			function onFail(message){
+				alert('failed because '+message);
+			}
+			
+			function saveMyFormData(){
+	
+				var image = document.getElementById('smallImage');
+				
+				var options = new FileUploadOptions();
+				options.chunkedMode = false;
+				options.fileKey = "file";
+				var imageFileName = "filex";
+				options.fileName = imageFileName;
+				options.mimeType = "image/jpeg";
+				options.headers = {
+                           Connection: "close"
+                };
+
+                // setup parameters
+                var params = {};
+				var ft = new FileTransfer();
+				//alert(encodeURI("http://localhost:8080/docs/images"));
+				
+				ft.upload(image.src, encodeURI("http://172.16.0.6:8080/test-project/UploadServlet"), win, fail, options);
+			}
+
+			function win(r){
+				alert("response "+r.response);
+				alert("Sent "+r.bytesSent);
+			}
+
+			function fail(error){
+				switch (error.code) { 
+			                case FileTransferError.FILE_NOT_FOUND_ERR: 
+			                    alert("Photo file not found"); 
+			                    break; 
+			                case FileTransferError.INVALID_URL_ERR: 
+			                    alert("Bad Photo URL"); 
+			                    break; 
+			                case FileTransferError.CONNECTION_ERR: 
+			                    alert("Connection error"); 
+			                    break; 
+			            } 
+
+			        alert("An error has occurred: Code = " + error.code); 
+			}
+       </script>
+    </head>
+    <body>
+		<div class="app">
+			
+			
+			<!--
+			<button onclick="javascript:capturePhotoEdit();">Capture Editable Photo</button> <br>
+		    <button onclick="javascript:getPhoto(pictureSource.PHOTOLIBRARY);">From Photo Library</button><br>
+		    <button onclick="javascript:getPhoto(pictureSource.SAVEDPHOTOALBUM);">From Photo Album</button><br>
+		    -->
+		    
+		    <!--<form id="myform">-->
+			<button id ="capturePhotoButton" onclick="javascript:capturePhoto();">Capture Photo</button> <br>
+			<button onclick="javascript:capturePhotoEdit();">Capture Editable Photo</button> <br>
+		    <button onclick="javascript:getPhoto(pictureSource.PHOTOLIBRARY);">From Photo Library</button><br>
+		    <button onclick="javascript:getPhoto(pictureSource.SAVEDPHOTOALBUM);">From Photo Album</button><br>
+		    <img style="display:none;width:60px;height:60px;" id="smallImage" src="" />
+		    <img style="display:none;" id="largeImage" src="" />
+		    
+			     <button onclick="javascript:saveMyFormData();">
+					Save Data
+					</button>
+		  <!--  </form> -->
+		    
+		    <form id="xForm" action="http://172.16.0.6:8080/test-project/UploadServlet" method="post">
+		    
+		       <input type="text" name="img" id="img" />
+		        <input type="file" name="upload" id="upload" />
+		       <input type="submit" name="submit" value="submit" />
+		      
+		    </form>
+		    <p><a href="remote.html">Remote URL</a></p>
+		</div>
+		
+	</body>
+ </html>
